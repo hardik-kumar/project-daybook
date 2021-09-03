@@ -1,0 +1,7 @@
+{
+    "env": {
+        "MONGO_PW" : "Qwerty12",
+        "JWT_KEY" : "authorization_key",
+        "PORT" : "3000"
+    }
+}

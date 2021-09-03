@@ -1,0 +1,17 @@
+<div class = "account">
+    <header>
+        <span>ICICI Account</span>
+        <span><button type = "button" mat-raised-button color="primary" (click)="openDialog()">Add</button></span>
+        <span><input type="file" (change)="onFileChange($event)" multiple="false" /></span>
+    </header>
+    <div class = "containerBox">
+        <div *ngFor = "let tr of transactions" class = "transaction-row" [ngClass]="tr.amount > 0 ? 'credit' : 'debit'">
+            <div >
+                <span class = "transaction-desc">{{tr.desc}}</span>
+                <span class = "transaction-amount" style="cursor: pointer;"><mat-icon (click)="deleteSingleTransaction(tr._id || '')">delete</mat-icon></span>
+                <span class = "transaction-amount">{{tr.amount}}</span>
+            </div>
+        </div>
+        <div class = "balance" [ngClass]="balance > 0 ? 'credit' : 'debit'">BALANCE <span style="float: right;">{{balance}}</span></div>
+    </div>
+</div>

@@ -1,0 +1,55 @@
+<div>
+  <form [formGroup]="transactionForm" (submit)="saveTransaction()">
+    <mat-form-field>
+      <mat-label>Type</mat-label>
+      <mat-select formControlName="type">
+        <mat-option *ngFor="let type of types" [value]="type">
+          {{type.value}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <input type="text" matInput formControlName="description" placeholder="Description">
+    </mat-form-field>
+    <mat-form-field>
+      <input type="number" matInput formControlName="amount" placeholder="Amount">
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Choose a date</mat-label>
+      <input matInput formControlName="date" [matDatepicker]="picker">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Category</mat-label>
+      <mat-select formControlName="category">
+        <mat-option *ngFor="let category of categories" [value]="category">
+          {{category.value}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+
+    <mat-form-field>
+      <mat-chip-list #chipList>
+        <mat-chip *ngFor="let tag of tags" [selectable]="selectable"
+             [removable]="removable" (removed)="remove(tag)">
+      {{tag}}
+      <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+    </mat-chip>
+        <input type="text"
+               matInput 
+               formControlName="tags" 
+               placeholder="Tags"
+               [matChipInputFor]="chipList"
+               [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+           [matChipInputAddOnBlur]="addOnBlur"
+           (matChipInputTokenEnd)="add($event)">
+      </mat-chip-list>
+    </mat-form-field>
+
+
+    <mat-slide-toggle formControlName="amountExclusion">Exclude from total?</mat-slide-toggle>
+    <button type="submit" mat-raised-button color="primary" [disabled]="transactionForm.invalid">Save</button>
+  </form>
+</div>

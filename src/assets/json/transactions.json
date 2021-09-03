@@ -1,0 +1,206 @@
+[
+    {
+        "id": 1,
+        "type": "income",
+        "desc": "salary",
+        "amount": 5000,
+        "date": "26-08-2021",
+        "category": "salary",
+        "tags": ["salary","income"],
+        "amountExclusion": false,
+        "accountId": 1
+    },
+    {
+        "id": 1,
+        "type": "spend",
+        "desc": "food expenses",
+        "amount": -2000,
+        "date": "26-08-2021",
+        "category": "food",
+        "tags": ["salary","spend"],
+        "amountExclusion": false,
+        "accountId": 1
+    },
+    {
+        "id": 1,
+        "type": "spend",
+        "desc": "medical expenses",
+        "amount": -1000,
+        "date": "26-08-2021",
+        "category": "medicine",
+        "tags": ["salary","spend"],
+        "amountExclusion": false,
+        "accountId": 1
+    },
+    {
+        "id": 1,
+        "type": "income",
+        "desc": "salary",
+        "amount": 5000,
+        "date": "26-08-2021",
+        "category": "salary",
+        "tags": ["salary","income"],
+        "amountExclusion": false,
+        "accountId": 1
+    },{
+        "id": 1,
+        "type": "income",
+        "desc": "salary",
+        "amount": 5000,
+        "date": "26-08-2021",
+        "category": "salary",
+        "tags": ["salary","income"],
+        "amountExclusion": false,
+        "accountId": 1
+    },{
+        "id": 1,
+        "type": "income",
+        "desc": "salary",
+        "amount": 5000,
+        "date": "26-08-2021",
+        "category": "salary",
+        "tags": ["salary","income"],
+        "amountExclusion": false,
+        "accountId": 1
+    },{
+        "id": 1,
+        "type": "income",
+        "desc": "salary",
+        "amount": 5000,
+        "date": "26-08-2021",
+        "category": "salary",
+        "tags": ["salary","income"],
+        "amountExclusion": false,
+        "accountId": 1
+    },{
+        "id": 1,
+        "type": "income",
+        "desc": "salary",
+        "amount": 5000,
+        "date": "26-08-2021",
+        "category": "salary",
+        "tags": ["salary","income"],
+        "amountExclusion": false,
+        "accountId": 1
+    },{
+        "id": 1,
+        "type": "income",
+        "desc": "salary",
+        "amount": 5000,
+        "date": "26-08-2021",
+        "category": "salary",
+        "tags": ["salary","income"],
+        "amountExclusion": false,
+        "accountId": 1
+    },{
+        "id": 1,
+        "type": "income",
+        "desc": "salary",
+        "amount": 5000,
+        "date": "26-08-2021",
+        "category": "salary",
+        "tags": ["salary","income"],
+        "amountExclusion": false,
+        "accountId": 1
+    },{
+        "id": 1,
+        "type": "income",
+        "desc": "salary",
+        "amount": 5000,
+        "date": "26-08-2021",
+        "category": "salary",
+        "tags": ["salary","income"],
+        "amountExclusion": false,
+        "accountId": 1
+    },{
+        "id": 1,
+        "type": "income",
+        "desc": "salary",
+        "amount": 5000,
+        "date": "26-08-2021",
+        "category": "salary",
+        "tags": ["salary","income"],
+        "amountExclusion": false,
+        "accountId": 1
+    },{
+        "id": 1,
+        "type": "income",
+        "desc": "salary",
+        "amount": 5000,
+        "date": "26-08-2021",
+        "category": "salary",
+        "tags": ["salary","income"],
+        "amountExclusion": false,
+        "accountId": 1
+    },{
+        "id": 1,
+        "type": "income",
+        "desc": "salary",
+        "amount": 5000,
+        "date": "26-08-2021",
+        "category": "salary",
+        "tags": ["salary","income"],
+        "amountExclusion": false,
+        "accountId": 1
+    },{
+        "id": 1,
+        "type": "income",
+        "desc": "salary",
+        "amount": 5000,
+        "date": "26-08-2021",
+        "category": "salary",
+        "tags": ["salary","income"],
+        "amountExclusion": false,
+        "accountId": 1
+    },{
+        "id": 1,
+        "type": "income",
+        "desc": "salary",
+        "amount": 5000,
+        "date": "26-08-2021",
+        "category": "salary",
+        "tags": ["salary","income"],
+        "amountExclusion": false,
+        "accountId": 1
+    },{
+        "id": 1,
+        "type": "income",
+        "desc": "salary",
+        "amount": 5000,
+        "date": "26-08-2021",
+        "category": "salary",
+        "tags": ["salary","income"],
+        "amountExclusion": false,
+        "accountId": 1
+    },{
+        "id": 1,
+        "type": "income",
+        "desc": "salary",
+        "amount": 5000,
+        "date": "26-08-2021",
+        "category": "salary",
+        "tags": ["salary","income"],
+        "amountExclusion": false,
+        "accountId": 1
+    },{
+        "id": 1,
+        "type": "income",
+        "desc": "salary",
+        "amount": 5000,
+        "date": "26-08-2021",
+        "category": "salary",
+        "tags": ["salary","income"],
+        "amountExclusion": false,
+        "accountId": 1
+    },{
+        "id": 1,
+        "type": "income",
+        "desc": "salary",
+        "amount": 5000,
+        "date": "26-08-2021",
+        "category": "salary",
+        "tags": ["salary","income"],
+        "amountExclusion": false,
+        "accountId": 1
+    }
+]
