@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { TransactionService } from '../transaction.service';
+// import { TransactionService } from '../services/transaction.service';
+import { TransactionService } from 'src/app/transaction.service';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { TransactionDialogComponent } from '../transaction-dialog/transaction-dialog.component';
 import { Transaction } from 'src/assets/model/transaction';
 import * as XLSX from 'xlsx';
 import { DatePipe } from '@angular/common';
+import { CommonService } from '../services/common.service';
 // import * as df from 'dateformat';
 @Component({
   selector: 'app-account',
@@ -13,10 +15,15 @@ import { DatePipe } from '@angular/common';
 })
 export class AccountComponent implements OnInit {
 
-  constructor(private service : TransactionService,public dialog: MatDialog,public datepipe: DatePipe) { }
+  constructor(private service : TransactionService, 
+              public dialog: MatDialog,
+              public datepipe: DatePipe,
+              public commonService : CommonService) { }
   transactions:Transaction[] = [];
   bulkTransaction: Transaction[] = [];
+  errorLog: Transaction[] = [];
   balance: number = 0;
+  isErrorLog: boolean = false;
   ngOnInit(): void {
     
     this.getTransactions();
@@ -35,9 +42,7 @@ export class AccountComponent implements OnInit {
   }
 
   deleteSingleTransaction(id: String){
-    let singleTransaction = this.transactions[0];
-    console.log("deleting transaction",singleTransaction);
-    this.service.deleteTransaction(singleTransaction._id || '').subscribe(response => {
+    this.service.deleteTransaction(id).subscribe(response => {
       console.log("delete response",response);
       this.getTransactions();      
     })
@@ -100,7 +105,9 @@ export class AccountComponent implements OnInit {
         if(index == 0) continue;
           isAdded = this.recordToObject(tempBulkObj[index], index);
           console.log("is added check",isAdded," ", index);
-          if(!isAdded) break;
+          if(!isAdded) {
+            break;
+          }
       }
 
       if(isAdded){
@@ -142,7 +149,7 @@ export class AccountComponent implements OnInit {
     let tempObj : Transaction = {
       type: record[0],
       desc: record[1],
-      amount: record[2],
+      amount: this.commonService.convertAmount(record[2],record[0]),
       date: record[3],
       category: record[4],
       tags: ["record[5]"],
@@ -153,9 +160,36 @@ export class AccountComponent implements OnInit {
     if(isValid){
       this.bulkTransaction.push(tempObj);
     }
+    else{
+      this.errorLog.push(tempObj);
+      console.log("error log",this.errorLog);
+      this.isErrorLog = true;
+    }
     console.log("temp obj",tempObj);
      return isValid
   }
-}
 
-//git changes check
+  displayedColumns: string[] = ['type','desc','amount','date','category','tags','amountExclusion','accountId'];
+  dataSource = this.errorLog;
+}
+// type: String,
+//       desc: String,
+//       amount: number,
+//       date: String,
+//       category: String,
+//       tags: String[],
+//       amountExclusion : boolean,
+//       accountId: number
+
+const ELEMENT_DATA: Transaction[] = [
+  {
+    "type": "income",
+    "desc": "salary",
+    "amount": 5000,
+    "date": "26-08-2021",
+    "category": "salary",
+    "tags": ["salary","income"],
+    "amountExclusion": false,
+    "accountId": 1
+}
+];

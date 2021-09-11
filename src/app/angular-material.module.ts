@@ -14,6 +14,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { MatChipsModule } from '@angular/material/chips';
 import {MatIconModule} from '@angular/material/icon';
+import {MatTableModule} from '@angular/material/table';
 
 @NgModule({
     exports : [
@@ -31,7 +32,8 @@ import {MatIconModule} from '@angular/material/icon';
     MatSlideToggleModule,
     MatChipsModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatTableModule
     ]
 })
 export class AngularMaterialModule{

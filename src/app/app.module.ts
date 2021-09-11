@@ -16,12 +16,17 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
 import { DatePipe } from '@angular/common';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatButtonModule } from '@angular/material/button';
+import { ChartsModule } from 'ng2-charts';
+import { DonutChartComponent } from './components/donut-chart/donut-chart.component';
+import { PieChartComponent } from './components/charts/pie-chart/pie-chart.component'; 
 
 @NgModule({
   declarations: [
     AppComponent,
     AccountComponent,
-    TransactionDialogComponent
+    TransactionDialogComponent,
+    DonutChartComponent,
+    PieChartComponent
   ],
   imports: [
     BrowserModule,
@@ -34,7 +39,8 @@ import { MatButtonModule } from '@angular/material/button';
     MatSelectModule,
     MatInputModule,
     MatChipsModule,
-    MatButtonModule
+    MatButtonModule,
+    ChartsModule
     
   ],
   providers: [DatePipe,

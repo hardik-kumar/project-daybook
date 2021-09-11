@@ -1,0 +1,27 @@
+import { Component, OnInit } from '@angular/core';
+import {ChartType} from 'chart.js'
+@Component({
+  selector: 'app-donut-chart',
+  templateUrl: './donut-chart.component.html',
+  styleUrls: ['./donut-chart.component.scss']
+})
+export class DonutChartComponent implements OnInit {
+
+  constructor() { }
+
+  public barChartOptions = {
+    scaleShowVerticalLines: false,
+    responsive: true
+  };
+
+  public barChartLabels = ['2006', '2007', '2008', '2009', '2010', '2011', '2012'];
+  public barChartType : ChartType = 'bar';
+  public barChartLegend = true;
+  public barChartData = [
+    {data: [65, 59, 80, 81, 56, 55, 40], label: 'Series A'},
+    {data: [28, 48, 40, 19, 86, 27, 90], label: 'Series B'}
+  ];
+  ngOnInit() {
+  }
+
+}

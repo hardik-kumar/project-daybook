@@ -4,6 +4,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {MatChipInputEvent} from '@angular/material/chips';
+import { CommonService } from '../services/common.service';
 
 
 @Component({
@@ -37,7 +38,8 @@ export class TransactionDialogComponent implements OnInit {
 
           transactionForm: FormGroup ;
   constructor(public dialogRef: MatDialogRef<TransactionDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,public datepipe: DatePipe) { }
+    @Inject(MAT_DIALOG_DATA) public data: any,public datepipe: DatePipe, 
+    public commonService : CommonService) { }
 
   ngOnInit(): void {
 
@@ -97,7 +99,7 @@ export class TransactionDialogComponent implements OnInit {
         id: 4,
         type: this.transactionForm.controls['type'].value,
         desc: this.transactionForm.controls['description'].value,
-        amount: this.transactionForm.controls['amount'].value,
+        amount: this.commonService.convertAmount(this.transactionForm.controls['amount'].value, this.transactionForm.controls['type'].value.value),
         date: this.datepipe.transform(this.transactionForm.controls['date'].value, 'dd-MM-yyyy'),
         category: this.transactionForm.controls['category'].value,
         tags: this.transactionForm.controls['tags'].value,
