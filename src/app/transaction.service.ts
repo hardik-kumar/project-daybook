@@ -46,7 +46,7 @@ export class TransactionService {
     return this.http.get<{message: string, allTransactions: Transaction[]}>('http://localhost:3000/api/transaction/allTransaction/'+accountId)
   }
 
-  deleteTransaction(id: String){
+  deleteTransaction(id: string){
     console.log("service deleted transaction id",id);
     
     return this.http.delete<{message:string}>('http://localhost:3000/api/transaction/deleteTransaction/'+id);

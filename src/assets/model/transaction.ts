@@ -1,11 +1,11 @@
 export interface Transaction{
-      _id?: String
-      type: String,
-      desc: String,
+      _id?: string
+      type: string,
+      desc: string,
       amount: number,
-      date: String,
+      date: string,
       category: string,
-      tags: String[],
+      tags: string[],
       amountExclusion : boolean,
       accountId: number
 }

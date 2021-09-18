@@ -8,8 +8,8 @@ export class CommonService {
 
   constructor() { }
 
-  possibleIncomeTypes : String[] = ["income"]
-  possibleExpenseType : String[] = ["spend"]
+  possibleIncomeTypes : string[] = ["income"]
+  possibleExpenseType : string[] = ["spend"]
   
   categoryIcons : {[category: string]: string} = {'Bills' :'bi bi-receipt',
   'EMI' :'bi bi-caret-right-fill',
@@ -28,9 +28,9 @@ export class CommonService {
   'Reward': 'fas fa-award'}
 
   
-  convertAmount(amount: number, type: String) : number{
+  convertAmount(amount: number, type: string) : number{
     console.log("!!!type",type);
-    if( this.possibleIncomeTypes.indexOf(type.toString().trim().toLowerCase()) > -1){       
+    if( this.possibleIncomeTypes.indexOf(type.trim().toLowerCase()) > -1){       
         return amount > 0 ? amount : (-amount);
     }
     else{

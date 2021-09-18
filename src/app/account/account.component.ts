@@ -78,7 +78,7 @@ export class AccountComponent implements OnInit {
     this.pieChartDataEx = chartObj.values;
   }
 
-  deleteSingleTransaction(id: String){
+  deleteSingleTransaction(id: string){
     this.service.deleteTransaction(id).subscribe(response => {
       console.log("delete response",response);
       this.getTransactions();      
@@ -230,24 +230,3 @@ export class AccountComponent implements OnInit {
   displayedColumns: string[] = ['type','desc','amount','date','category','tags','amountExclusion','accountId'];
   dataSource = this.errorLog;
 }
-// type: String,
-//       desc: String,
-//       amount: number,
-//       date: String,
-//       category: String,
-//       tags: String[],
-//       amountExclusion : boolean,
-//       accountId: number
-
-const ELEMENT_DATA: Transaction[] = [
-  {
-    "type": "income",
-    "desc": "salary",
-    "amount": 5000,
-    "date": "26-08-2021",
-    "category": "salary",
-    "tags": ["salary","income"],
-    "amountExclusion": false,
-    "accountId": 1
-}
-];
