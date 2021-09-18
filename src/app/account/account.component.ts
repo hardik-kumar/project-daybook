@@ -18,7 +18,7 @@ export class AccountComponent implements OnInit {
 
   constructor(private service : TransactionService, 
               public dialog: MatDialog,
-              public datepipe: DatePipe,
+              public datePipe: DatePipe,
               public commonService : CommonService) { }
   transactions:Transaction[] = [];
   bulkTransaction: Transaction[] = [];
@@ -52,6 +52,17 @@ export class AccountComponent implements OnInit {
     this.service.allTransactions(this.accountId).subscribe(response => {
       console.log("from backend",response);
       this.transactions = response.allTransactions;
+      //SORTING
+      //comparing two dates (a.date, b.date)
+      //transaction.date format = dd/MM/yyyy
+      //converting transaction.date format to MM/dd/yyyy using transform(date,'dd/MM/yyyy')
+      //transform function return ' string | null ' type; to avoid null type error ! is used
+      //It tells TypeScript that even though something looks like it could be null, it can trust you that it's not
+      //string type date of format ' MM/dd/yyyy ' is converted to Date type
+      //sorting comparison is done using difference of two dates
+      this.transactions.sort((a,b) =>{
+        return (+ new Date(this.datePipe.transform(a.date, 'dd/MM/yyyy')!)) - (+ new Date(this.datePipe.transform(b.date, 'dd/MM/yyyy')!))
+      })
       this.calculateBalance();
       this.prepareCharts();
     })
