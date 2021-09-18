@@ -24,6 +24,9 @@ export class AccountComponent implements OnInit {
   bulkTransaction: Transaction[] = [];
   errorLog: Transaction[] = [];
   balance: number = 0;
+  lastBalance: number = 0;
+  income: number = 0;
+  expenses: number = 0;
   isErrorLog: boolean = false;
   pieChartDataIn : number[]= [];
   pieChartLabelsIn : string[] = []
@@ -72,8 +75,14 @@ export class AccountComponent implements OnInit {
     let inTransactions: Transaction[] = [];
     let exTransactions: Transaction[] = [];
     this.transactions.forEach(transactionObj =>{
-      if(transactionObj.amount > 0) inTransactions.push(transactionObj)
-      else exTransactions.push(transactionObj);
+      if(transactionObj.amount > 0) {
+        inTransactions.push(transactionObj);
+        this.income += transactionObj.amount;
+      }
+      else {
+        exTransactions.push(transactionObj);
+        this.expenses += transactionObj.amount;
+      }
     })
     
     console.log(inTransactions);
@@ -97,7 +106,12 @@ export class AccountComponent implements OnInit {
   }
   calculateBalance(){
     this.balance = this.transactions.map(value => value.amount).reduce((accumulator, currentValue) => accumulator + currentValue);
-
+    let lastBalance = this.transactions.find(transaction => transaction.category == 'Last Balance');
+    this.lastBalance = lastBalance?.amount? lastBalance.amount : 0;
+    //Subtracting last balance from total income
+    this.income -= this.lastBalance;
+    console.log("last bal",lastBalance);
+    
   }
   openDialog(): void {
     const dialogRef = this.dialog.open(TransactionDialogComponent, {

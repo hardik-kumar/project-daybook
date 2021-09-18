@@ -25,7 +25,8 @@ export class CommonService {
   'Travels' :'fas fa-plane-departure',
   'Others' :'fas fa-ellipsis-h',
    'Salary' : 'fas fa-money-check-alt',
-  'Reward': 'fas fa-award'}
+  'Reward': 'fas fa-award',
+   'Last Balance': 'fas fa-cash-register'}
 
   
   convertAmount(amount: number, type: string) : number{

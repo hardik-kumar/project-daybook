@@ -13,7 +13,8 @@
         <div *ngFor = "let tr of transactions;let index = index" class = "transaction-row" [ngClass]="tr.amount > 0 ? 'credit' : 'debit'">
             <div (mouseover)="rowIndex = index" (mouseleave)="rowIndex = -1">
               <i [ngClass] = "categoryIcons[tr.category]" style="padding: 5px;"></i>
-                <span class = "transaction-desc">{{tr.desc}}</span>
+                <span class = "transaction-desc">{{tr.desc}} &nbsp;&nbsp;&nbsp;</span> 
+                <span class = "transaction-desc">{{tr.date}}</span>
                 <span *ngIf="rowIndex == index" class = "actionIcon" style="cursor: pointer;">
                   <i class="fas fa-edit" (click)="editDialog(tr)"></i>
                   <i class="bi bi-trash-fill" (click)="deleteSingleTransaction(tr._id || '')"></i>
@@ -22,7 +23,11 @@
             </div>
             
         </div>
-        <div class = "balance" [ngClass]="balance > 0 ? 'credit' : 'debit'">BALANCE <span style="float: right;">{{balance}}</span></div>
+        <div class = "balance" [ngClass]="balance > 0 ? 'credit' : 'debit'">
+          <div style="font-size: 12px;">LAST BALANCE + INCOME - EXPENSES </div>
+          <div style="font-size: 12px;">{{lastBalance}} + {{income}} - {{expenses}}</div>
+        <div >BALANCE <span style="float: right;">{{balance}}</span></div>
+        </div>
     </div>
     </mat-card>
 </div>
