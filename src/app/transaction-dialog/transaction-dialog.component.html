@@ -2,9 +2,9 @@
   <form [formGroup]="transactionForm" (submit)="saveTransaction()">
     <mat-form-field>
       <mat-label>Type</mat-label>
-      <mat-select formControlName="type">
+      <mat-select formControlName="type" (selectionChange)="typeChange()">
         <mat-option *ngFor="let type of types" [value]="type">
-          {{type.value}}
+          {{type}}
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -24,7 +24,8 @@
       <mat-label>Category</mat-label>
       <mat-select formControlName="category">
         <mat-option *ngFor="let category of categories" [value]="category">
-          {{category.value}}
+          <i [ngClass] = "categoryIcons[category]"></i>
+          {{category}}
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -35,7 +36,7 @@
         <mat-chip *ngFor="let tag of tags" [selectable]="selectable"
              [removable]="removable" (removed)="remove(tag)">
       {{tag}}
-      <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+      <i class="bi bi-x-circle-fill" matChipRemove *ngIf="removable"></i>
     </mat-chip>
         <input type="text"
                matInput 

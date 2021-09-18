@@ -1,5 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 @import '~bootstrap/dist/css/bootstrap.min.css';
+@import "~material-icons/iconfont/material-icons.css";
+@import "~bootstrap-icons/font/bootstrap-icons.css";
+//**IMPORTANT FONT AWESOME IMPORT
+@import url("https://use.fontawesome.com/releases/v5.13.0/css/all.css");
+
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

@@ -25,7 +25,7 @@ export class TransactionService {
       amount: transactionObj.amount,
       date: transactionObj.date,
       category: transactionObj.category,
-      tags: [transactionObj.tags],
+      tags: transactionObj.tags,
       amountExclusion : transactionObj.amountExclusion,
       accountId: transactionObj.accountId
     }
@@ -34,8 +34,16 @@ export class TransactionService {
     return this.http.post('http://localhost:3000/api/transaction/addTransaction',obj)
   }
 
-  allTransactions(){
-    return this.http.get<{message: string, allTransactions: Transaction[]}>('http://localhost:3000/api/transaction/allTransaction')
+  updateTransaction(transactionId: string,transactionObj: Transaction){
+    console.log("update transaction",transactionObj,"id: ",transactionId);
+    return this.http.put<{message: string}>('http://localhost:3000/api/transaction/updateTransaction/'+transactionId,transactionObj)
+
+  }
+
+  allTransactions(accountId:number){
+    console.log("acc id",accountId);
+    
+    return this.http.get<{message: string, allTransactions: Transaction[]}>('http://localhost:3000/api/transaction/allTransaction/'+accountId)
   }
 
   deleteTransaction(id: String){

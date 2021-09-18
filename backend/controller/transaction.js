@@ -1,3 +1,4 @@
+const { request, response } = require('express');
 const Transaction = require('../models/transaction')
 
 exports.addTransaction = (request, response, next) =>{
@@ -5,12 +6,12 @@ exports.addTransaction = (request, response, next) =>{
     console.log("BODY",request.body)
     url = request.protocol + "://" + request.get("host");
     let obj = new Transaction({
-       type: request.body.type.value,
+       type: request.body.type,
     desc: request.body.desc,
     amount: request.body.amount,
     date: request.body.date,
-    category: request.body.category.value,
-    tags: request.body.tags[0],
+    category: request.body.category,
+    tags: request.body.tags,
     amountExclusion: request.body.amountExclusion,
     accountId: request.body.accountId
     });
@@ -29,6 +30,36 @@ exports.addTransaction = (request, response, next) =>{
       response.status(500).json({message:error});
     });
   }
+
+exports.updateTransaction = (request, response, next) =>{
+  // let imagePath = request.body.imagePath;
+  // if(request.file){
+  //   const url = request.protocol + "://" + request.get("host");
+  //   imagePath = url + "/images/" + request.file.filename;
+  // }
+  console.log("HERE !!!");
+  let obj = new Transaction({
+    _id: request.params.id,
+    type: request.body.type.value,
+ desc: request.body.desc,
+ amount: request.body.amount,
+ date: request.body.date,
+ category: request.body.category,
+ tags: request.body.tags,
+ amountExclusion: request.body.amountExclusion,
+ accountId: request.body.accountId
+ });
+  Transaction.updateOne({_id: request.params.id},obj).then(res =>{
+    if(res.n > 0) {
+      response.status(200).json({message: "success"})
+    }
+    else {
+      response.status(401).json({message: "unautherized"})
+    }
+  }).catch(error =>{
+    response.status(500).json({message:"Unable to connect to server, posts not found"});
+  })
+}
   exports.addBulkTransaction = (request, response, next) =>{
 
     console.log("BODY",request.body)
@@ -42,7 +73,7 @@ exports.addTransaction = (request, response, next) =>{
      amount: request.body[i].amount,
      date: request.body[i].date,
      category: request.body[i].category,
-     tags: request.body[i].tags[0],
+     tags: request.body[i].tags,
      amountExclusion: request.body[i].amountExclusion,
      accountId: request.body[i].accountId
      });
@@ -62,10 +93,10 @@ exports.addTransaction = (request, response, next) =>{
   }
 
   exports.allTransaction = (request, response, next) =>{
-
+    console.log("ACC ID",request.params.accountId);
     // const pageSize = +request.query.pagesize;
     // const currentPage = +request.query.page;
-    const query = Transaction.find();
+    const query = Transaction.find({accountId : request.params.accountId});
     let allTransactions;
     // if(pageSize && currentPage){
     //   query.skip(pageSize * (currentPage - 1)).limit(pageSize);

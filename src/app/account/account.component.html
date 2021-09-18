@@ -1,20 +1,41 @@
-<div class = "account">
-    <header>
+<div class = "row account-container">
+
+  <div class = "col-4 account">
+    <mat-card>
+      <header>
         <span>ICICI Account</span>
+        <mat-slide-toggle [checked]= "showChart" (change) = "showChart = !showChart">Show Pie Chart</mat-slide-toggle>
+        
         <span><button type = "button" mat-raised-button color="primary" (click)="openDialog()">Add</button></span>
-        <span><input type="file" (change)="onFileChange($event)" multiple="false" /></span>
-    </header>
+        <span style="font-size: 35px;"><i class="bi bi-file-earmark-arrow-up-fill" (click)="file.click()"></i><input type="file" style="display: none;" #file (change)="onFileChange($event)" multiple="false" /></span>
+      </header>
     <div class = "containerBox">
-        <div *ngFor = "let tr of transactions" class = "transaction-row" [ngClass]="tr.amount > 0 ? 'credit' : 'debit'">
-            <div >
+        <div *ngFor = "let tr of transactions;let index = index" class = "transaction-row" [ngClass]="tr.amount > 0 ? 'credit' : 'debit'">
+            <div (mouseover)="rowIndex = index" (mouseleave)="rowIndex = -1">
+              <i [ngClass] = "categoryIcons[tr.category]" style="padding: 5px;"></i>
                 <span class = "transaction-desc">{{tr.desc}}</span>
-                <span class = "transaction-amount" style="cursor: pointer;"><mat-icon (click)="deleteSingleTransaction(tr._id || '')">delete</mat-icon></span>
+                <span *ngIf="rowIndex == index" class = "actionIcon" style="cursor: pointer;">
+                  <i class="fas fa-edit" (click)="editDialog(tr)"></i>
+                  <i class="bi bi-trash-fill" (click)="deleteSingleTransaction(tr._id || '')"></i>
+                </span>
                 <span class = "transaction-amount">{{tr.amount}}</span>
             </div>
+            
         </div>
         <div class = "balance" [ngClass]="balance > 0 ? 'credit' : 'debit'">BALANCE <span style="float: right;">{{balance}}</span></div>
     </div>
+    </mat-card>
 </div>
+<div *ngIf = "showChart" class = "col-4 incomeChart chartStyling">
+  <app-pie-chart [pieChartData] = "pieChartDataIn" [pieChartLabels] = "pieChartLabelsIn"></app-pie-chart>
+</div>
+
+<div *ngIf = "showChart" class = "col-4 expenditureChart chartStyling">
+  <app-pie-chart [pieChartData] = "pieChartDataEx" [pieChartLabels] = "pieChartLabelsEx"></app-pie-chart>
+</div>
+
+</div>
+
 <div *ngIf = "isErrorLog">
     <span><button type = "button" mat-raised-button color="primary" (click)="openDialog()">Add</button></span>
 
@@ -65,8 +86,4 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
-</div>
-
-<div>
-  <app-pie-chart></app-pie-chart>
 </div>

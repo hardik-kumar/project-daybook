@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 // import { TransactionService } from '../services/transaction.service';
 import { TransactionService } from 'src/app/transaction.service';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
@@ -7,6 +7,7 @@ import { Transaction } from 'src/assets/model/transaction';
 import * as XLSX from 'xlsx';
 import { DatePipe } from '@angular/common';
 import { CommonService } from '../services/common.service';
+import { element } from 'protractor';
 // import * as df from 'dateformat';
 @Component({
   selector: 'app-account',
@@ -24,21 +25,57 @@ export class AccountComponent implements OnInit {
   errorLog: Transaction[] = [];
   balance: number = 0;
   isErrorLog: boolean = false;
-  ngOnInit(): void {
+  pieChartDataIn : number[]= [];
+  pieChartLabelsIn : string[] = []
+  pieChartDataEx : number[]= [];
+  pieChartLabelsEx : string[] = [];
+  showChart : boolean = true;
+  rowIndex: number = -1;
+  @Input() accountId: number;
+
+  categoryIcons : {[category: string]: string} = {}
     
+  ngOnInit(): void {
+    this.categoryIcons = this.commonService.categoryIcons;
     this.getTransactions();
     // this.service.getTransaction().subscribe(response => {
     //   this.transactions = response;
     //   this.calculateBalance();
     // })
+
+    console.log("!!!",this.commonService.categoryIcons['Food & Drinks']);
+    console.log("!!!",this.commonService.categoryIcons['Bills']);
+    
   }
 
   getTransactions(){
-    this.service.allTransactions().subscribe(response => {
+    this.service.allTransactions(this.accountId).subscribe(response => {
       console.log("from backend",response);
       this.transactions = response.allTransactions;
       this.calculateBalance();
+      this.prepareCharts();
     })
+  }
+  prepareCharts(){
+    //seperating income/expense transactions
+    let inTransactions: Transaction[] = [];
+    let exTransactions: Transaction[] = [];
+    this.transactions.forEach(transactionObj =>{
+      if(transactionObj.amount > 0) inTransactions.push(transactionObj)
+      else exTransactions.push(transactionObj);
+    })
+    
+    console.log(inTransactions);
+    console.log(exTransactions);
+        
+    console.log(this.commonService.categorizeTransactions(inTransactions));
+    let chartObj = this.commonService.categorizeTransactions(inTransactions);
+    this.pieChartLabelsIn = chartObj.labels;
+    this.pieChartDataIn = chartObj.values;
+
+    chartObj = this.commonService.categorizeTransactions(exTransactions)
+    this.pieChartLabelsEx = chartObj.labels;
+    this.pieChartDataEx = chartObj.values;
   }
 
   deleteSingleTransaction(id: String){
@@ -53,7 +90,8 @@ export class AccountComponent implements OnInit {
   }
   openDialog(): void {
     const dialogRef = this.dialog.open(TransactionDialogComponent, {
-      width: '550px'
+      width: '550px',
+      data: {accountId: this.accountId}
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -64,6 +102,26 @@ export class AccountComponent implements OnInit {
           console.log("RESPONSE",response);
           
         })        
+        console.log(this.transactions);
+        this.getTransactions();
+      }
+      
+    });
+  }
+
+  editDialog(transaction: Transaction): void {
+    const dialogRef = this.dialog.open(TransactionDialogComponent, {
+      width: '550px',
+      data: {edit:true, transaction: transaction,accountId: this.accountId}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed', result);
+      if(result){
+        console.log("edit object->",result);
+        this.service.updateTransaction(String(transaction._id),result.data).subscribe(response => {
+          console.log("RESPONSE",response);
+        })
         console.log(this.transactions);
         this.getTransactions();
       }
@@ -152,9 +210,9 @@ export class AccountComponent implements OnInit {
       amount: this.commonService.convertAmount(record[2],record[0]),
       date: record[3],
       category: record[4],
-      tags: ["record[5]"],
+      tags: record[5].split(','),
       amountExclusion : record[6],
-      accountId: record[7]
+      accountId: this.accountId
     }
     let isValid = this.validateTransactionObj(tempObj);    
     if(isValid){

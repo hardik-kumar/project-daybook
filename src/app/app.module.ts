@@ -19,6 +19,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { ChartsModule } from 'ng2-charts';
 import { DonutChartComponent } from './components/donut-chart/donut-chart.component';
 import { PieChartComponent } from './components/charts/pie-chart/pie-chart.component'; 
+import { MatIconModule } from '@angular/material/icon';
+import { PortfolioComponent } from './components/portfolio/portfolio.component';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 
 @NgModule({
   declarations: [
@@ -26,7 +29,8 @@ import { PieChartComponent } from './components/charts/pie-chart/pie-chart.compo
     AccountComponent,
     TransactionDialogComponent,
     DonutChartComponent,
-    PieChartComponent
+    PieChartComponent,
+    PortfolioComponent
   ],
   imports: [
     BrowserModule,
@@ -40,11 +44,13 @@ import { PieChartComponent } from './components/charts/pie-chart/pie-chart.compo
     MatInputModule,
     MatChipsModule,
     MatButtonModule,
-    ChartsModule
+    ChartsModule,
+    MatIconModule
     
   ],
   providers: [DatePipe,
-    {provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {hasBackdrop: true}}
+    {provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {hasBackdrop: true}},
+    { provide: MAT_DATE_LOCALE, useValue: 'en-GB' }
   ],
   bootstrap: [AppComponent],
   entryComponents: [TransactionDialogComponent]

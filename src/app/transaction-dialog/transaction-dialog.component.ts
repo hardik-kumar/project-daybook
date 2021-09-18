@@ -12,6 +12,7 @@ import { CommonService } from '../services/common.service';
   templateUrl: './transaction-dialog.component.html',
   styleUrls: ['./transaction-dialog.component.scss']
 })
+
 export class TransactionDialogComponent implements OnInit {
   tags : string[] = [];
   selectable = true;
@@ -19,29 +20,21 @@ export class TransactionDialogComponent implements OnInit {
   addOnBlur = true;
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
 
-
-  types = [{typeId : 1, value: "income"},
-          {typeId : 2, value: "spend"}]
-  categories = [{categoryId: 1, value: "Bills"},
-                {categoryId: 2, value: "EMI"},
-                {categoryId: 3, value: "Entertainment"},
-                {categoryId: 4, value: "Food & Drinks"},
-                {categoryId: 5, value: "Fuel"},
-                {categoryId: 6, value: "Groceries"},
-                {categoryId: 7, value: "Health"},
-                {categoryId: 8, value: "Investment"},
-                {categoryId: 9, value: "Lend"},
-                {categoryId: 10, value: "Shopping"},
-                {categoryId: 11, value: "Transfer"},
-                {categoryId: 12, value: "Travels"},
-                {categoryId: 13, value: "Others"}]
+  categoryIcons : {[category: string]: string} = {}
+  accountId: number = 0;
+  types: string[] = ["income","spend"]
+  categories:  string[] = []
 
           transactionForm: FormGroup ;
   constructor(public dialogRef: MatDialogRef<TransactionDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,public datepipe: DatePipe, 
+    @Inject(MAT_DIALOG_DATA) public data: any,public datePipe: DatePipe, 
     public commonService : CommonService) { }
 
   ngOnInit(): void {
+    console.log("data from account",this.data);
+    this.accountId = this.data.accountId;
+    this.categoryIcons = this.commonService.categoryIcons;
+    this.categories = Object.keys(this.categoryIcons);
 
     this.transactionForm = new FormGroup({
       type: new FormControl("null", {validators: [Validators.required]}),
@@ -53,6 +46,26 @@ export class TransactionDialogComponent implements OnInit {
       amountExclusion : new FormControl(false, {validators: [Validators.required]}),
       accountId: new FormControl()
     })
+
+    if(this.data != undefined && this.data.edit){
+      let transactionObj = this.data.transaction;
+      console.log("TRRRR",transactionObj);
+      
+      transactionObj.tags.forEach((element: string) => {
+        this.tags.push(element)
+      });
+      this.transactionForm.patchValue({
+        type: transactionObj.type,
+      description: transactionObj.desc,
+      amount: transactionObj.amount,
+      date: this.datePipe.transform(transactionObj.date, 'yyyy-dd-MM'),
+      // date: new Date(transactionObj.date),
+      category: transactionObj.category,
+      // tags: transactionObj.tags,
+      amountExclusion : transactionObj.amountExclusion,
+      accountId: transactionObj.accountId
+      })
+    }
   }
   onNoClick(): void {
     this.dialogRef.close({data: this.transactionForm});
@@ -99,16 +112,21 @@ export class TransactionDialogComponent implements OnInit {
         id: 4,
         type: this.transactionForm.controls['type'].value,
         desc: this.transactionForm.controls['description'].value,
-        amount: this.commonService.convertAmount(this.transactionForm.controls['amount'].value, this.transactionForm.controls['type'].value.value),
-        date: this.datepipe.transform(this.transactionForm.controls['date'].value, 'dd-MM-yyyy'),
+        amount: this.commonService.convertAmount(this.transactionForm.controls['amount'].value, this.transactionForm.controls['type'].value),
+        date: this.datePipe.transform(this.transactionForm.controls['date'].value, 'dd-MM-yyyy'),
         category: this.transactionForm.controls['category'].value,
         tags: this.transactionForm.controls['tags'].value,
         amountExclusion: this.transactionForm.controls['amountExclusion'].value,
-        accountId: 1
+        accountId: this.accountId
       }
     }
     console.log("objjjj ",obj);
     
     this.dialogRef.close({data: obj});
+  }
+
+  typeChange(){
+    console.log("type changed");
+    
   }
 }

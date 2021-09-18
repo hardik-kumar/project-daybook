@@ -4,7 +4,7 @@ export interface Transaction{
       desc: String,
       amount: number,
       date: String,
-      category: String,
+      category: string,
       tags: String[],
       amountExclusion : boolean,
       accountId: number
