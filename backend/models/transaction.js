@@ -4,7 +4,7 @@ const transationSchema = mongoose.Schema({
     type: {type: String, required: true},
     desc: {type: String},
     amount: {type: Number, required: true},
-    date: {type: String, required: true},
+    date: {type: Date, required: true},
     category: {type: String, required: true},
     tags: [{type: String}],
     amountExclusion: {type: Boolean, required: true},

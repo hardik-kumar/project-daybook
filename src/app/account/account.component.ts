@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 // import { TransactionService } from '../services/transaction.service';
 import { TransactionService } from 'src/app/transaction.service';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
@@ -14,12 +14,16 @@ import { element } from 'protractor';
   templateUrl: './account.component.html',
   styleUrls: ['./account.component.scss']
 })
-export class AccountComponent implements OnInit {
+export class AccountComponent implements OnInit, OnChanges {
 
   constructor(private service : TransactionService, 
               public dialog: MatDialog,
               public datePipe: DatePipe,
               public commonService : CommonService) { }
+  ngOnChanges(changes: SimpleChanges): void {
+    //console.log(this.month);
+    //console.log(this.year);    
+  }
   transactions:Transaction[] = [];
   bulkTransaction: Transaction[] = [];
   errorLog: Transaction[] = [];
@@ -35,10 +39,14 @@ export class AccountComponent implements OnInit {
   showChart : boolean = true;
   rowIndex: number = -1;
   @Input() accountId: number;
+  @Input() month: number;
+  @Input() year: number;
+  @Output() lendTransactions = new EventEmitter<Transaction[]>();
 
   categoryIcons : {[category: string]: string} = {}
     
   ngOnInit(): void {
+    //console.log("ACCOUNT CREATED ",this.month," ",this.year);
     this.categoryIcons = this.commonService.categoryIcons;
     this.getTransactions();
     // this.service.getTransaction().subscribe(response => {
@@ -46,14 +54,14 @@ export class AccountComponent implements OnInit {
     //   this.calculateBalance();
     // })
 
-    console.log("!!!",this.commonService.categoryIcons['Food & Drinks']);
-    console.log("!!!",this.commonService.categoryIcons['Bills']);
+    //console.log("!!!",this.commonService.categoryIcons['Food & Drinks']);
+    //console.log("!!!",this.commonService.categoryIcons['Bills']);
     
   }
 
   getTransactions(){
-    this.service.allTransactions(this.accountId).subscribe(response => {
-      console.log("from backend",response);
+    this.service.allTransactionByDate({accountId:this.accountId,month: this.month.toString(), year: this.year.toString()}).subscribe(response => {
+      //console.log("from backend",response);
       this.transactions = response.allTransactions;
       //SORTING
       //comparing two dates (a.date, b.date)
@@ -74,6 +82,8 @@ export class AccountComponent implements OnInit {
     //seperating income/expense transactions
     let inTransactions: Transaction[] = [];
     let exTransactions: Transaction[] = [];
+    this.income = 0;
+    this.expenses = 0;
     this.transactions.forEach(transactionObj =>{
       if(transactionObj.amount > 0) {
         inTransactions.push(transactionObj);
@@ -85,10 +95,10 @@ export class AccountComponent implements OnInit {
       }
     })
     
-    console.log(inTransactions);
-    console.log(exTransactions);
+    //console.log(inTransactions);
+    //console.log(exTransactions);
         
-    console.log(this.commonService.categorizeTransactions(inTransactions));
+    //console.log(this.commonService.categorizeTransactions(inTransactions));
     let chartObj = this.commonService.categorizeTransactions(inTransactions);
     this.pieChartLabelsIn = chartObj.labels;
     this.pieChartDataIn = chartObj.values;
@@ -100,18 +110,20 @@ export class AccountComponent implements OnInit {
 
   deleteSingleTransaction(id: string){
     this.service.deleteTransaction(id).subscribe(response => {
-      console.log("delete response",response);
+      //console.log("delete response",response);
       this.getTransactions();      
     })
   }
   calculateBalance(){
-    this.balance = this.transactions.map(value => value.amount).reduce((accumulator, currentValue) => accumulator + currentValue);
+    this.balance = this.transactions.map(value => value.amount).reduce((accumulator, currentValue) => {return accumulator + currentValue},0);
     let lastBalance = this.transactions.find(transaction => transaction.category == 'Last Balance');
     this.lastBalance = lastBalance?.amount? lastBalance.amount : 0;
     //Subtracting last balance from total income
     this.income -= this.lastBalance;
-    console.log("last bal",lastBalance);
-    
+    //console.log("last bal",lastBalance);
+
+    let lendTransactions = this.transactions.filter(transaction => transaction.category == 'Lend')
+    this.lendTransactions.emit(lendTransactions);
   }
   openDialog(): void {
     const dialogRef = this.dialog.open(TransactionDialogComponent, {
@@ -120,14 +132,14 @@ export class AccountComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed', result);
+      //console.log('The dialog was closed', result);
       if(result){
-        console.log("save object->",result);
+        //console.log("save object->",result);
         this.service.addTransaction(result.data).subscribe(response => {
-          console.log("RESPONSE",response);
+          //console.log("RESPONSE",response);
           
         })        
-        console.log(this.transactions);
+        //console.log(this.transactions);
         this.getTransactions();
       }
       
@@ -141,13 +153,13 @@ export class AccountComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed', result);
+      //console.log('The dialog was closed', result);
       if(result){
-        console.log("edit object->",result);
+        //console.log("edit object->",result);
         this.service.updateTransaction(String(transaction._id),result.data).subscribe(response => {
-          console.log("RESPONSE",response);
+          //console.log("RESPONSE",response);
         })
-        console.log(this.transactions);
+        //console.log(this.transactions);
         this.getTransactions();
       }
       
@@ -157,9 +169,9 @@ export class AccountComponent implements OnInit {
   addBulkTransaction(){
     // let bulkTransactions = [result.data,result.data,result.data]
     // let bulkTransactions : any[]= []
-        console.log("saving bulk transaction",this.bulkTransaction);
+        //console.log("saving bulk transaction",this.bulkTransaction);
         this.service.addBulkTransaction(this.bulkTransaction).subscribe(response => {
-          console.log(response);
+          //console.log(response);
           this.getTransactions();
         })
   }
@@ -182,12 +194,12 @@ export class AccountComponent implements OnInit {
 
       /* save data */
       let tempBulkObj = <Transaction[]>(XLSX.utils.sheet_to_json(ws, { header: 1 }));
-      console.log("data:",tempBulkObj);
+      //console.log("data:",tempBulkObj);
       let isAdded = false;
       for (let index = 0; index < tempBulkObj.length; index++) {
         if(index == 0) continue;
           isAdded = this.recordToObject(tempBulkObj[index], index);
-          console.log("is added check",isAdded," ", index);
+          //console.log("is added check",isAdded," ", index);
           if(!isAdded) {
             break;
           }
@@ -196,7 +208,7 @@ export class AccountComponent implements OnInit {
       if(isAdded){
         this.addBulkTransaction();
       }
-      console.log("after for loop bulk obj", this.bulkTransaction);
+      //console.log("after for loop bulk obj", this.bulkTransaction);
       
     };
     reader.readAsBinaryString(target.files[0]);
@@ -210,7 +222,7 @@ export class AccountComponent implements OnInit {
   // }
 
   validateTransactionObj(tempObj: Transaction): boolean{
-    console.log(typeof tempObj.amount == "number");
+    //console.log(typeof tempObj.amount == "number");
     
     if(
       (tempObj.type != null && tempObj.type != undefined && tempObj.type.trim() != '') &&
@@ -228,12 +240,13 @@ export class AccountComponent implements OnInit {
   }
 
   recordToObject(record: any, index: Number): boolean{
-    // console.log("incoming record",record,"index ",index);
+    // //console.log("incoming record",record,"index ",index);
     let tempObj : Transaction = {
       type: record[0],
       desc: record[1],
       amount: this.commonService.convertAmount(record[2],record[0]),
-      date: record[3],
+      date: this.datePipe.transform(record[3], 'yyyy-MM-dd') !,
+      //date: record[3],
       category: record[4],
       tags: record[5].split(','),
       amountExclusion : record[6],
@@ -245,10 +258,10 @@ export class AccountComponent implements OnInit {
     }
     else{
       this.errorLog.push(tempObj);
-      console.log("error log",this.errorLog);
+      //console.log("error log",this.errorLog);
       this.isErrorLog = true;
     }
-    console.log("temp obj",tempObj);
+    //console.log("temp obj",tempObj);
      return isValid
   }
 

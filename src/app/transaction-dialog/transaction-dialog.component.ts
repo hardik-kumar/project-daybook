@@ -31,7 +31,7 @@ export class TransactionDialogComponent implements OnInit {
     public commonService : CommonService) { }
 
   ngOnInit(): void {
-    console.log("data from account",this.data);
+    //console.log("data from account",this.data);
     this.accountId = this.data.accountId;
     this.categoryIcons = this.commonService.categoryIcons;
     this.categories = Object.keys(this.categoryIcons);
@@ -49,8 +49,7 @@ export class TransactionDialogComponent implements OnInit {
 
     if(this.data != undefined && this.data.edit){
       let transactionObj = this.data.transaction;
-      console.log("TRRRR",transactionObj);
-      
+      //
       transactionObj.tags.forEach((element: string) => {
         this.tags.push(element)
       });
@@ -58,8 +57,8 @@ export class TransactionDialogComponent implements OnInit {
         type: transactionObj.type,
       description: transactionObj.desc,
       amount: transactionObj.amount,
-      date: this.datePipe.transform(transactionObj.date, 'yyyy-dd-MM'),
-      // date: new Date(transactionObj.date),
+      // date: this.datePipe.transform(new Date(transactionObj.date), 'yyyy-dd-MM'),
+      date: new Date(transactionObj.date),
       category: transactionObj.category,
       // tags: transactionObj.tags,
       amountExclusion : transactionObj.amountExclusion,

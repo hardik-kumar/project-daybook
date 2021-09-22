@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const path = require("path");
 const transactionRoutes = require('./routes/transaction')
+const portfolioRoutes = require('./routes/portfolio')
+const sideAccountRoutes = require('./routes/sideAccount')
 const app = express();
 
 //  mongoose.connect("mongodb+srv://hardik_kumar46:Qwerty12@cluster0.md5a1.mongodb.net/node-angular?retryWrites=true&w=majority")
@@ -25,4 +27,6 @@ app.use((request, response, next) =>{
 })
 
 app.use('/api/transaction',transactionRoutes);
+app.use('/api/portfolio',portfolioRoutes);
+app.use('/api/sideAccount',sideAccountRoutes)
 module.exports = app;

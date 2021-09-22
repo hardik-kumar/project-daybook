@@ -1,0 +1,28 @@
+.containerBox{
+    background: bisque;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.transaction-row{
+    padding: 2%;
+    font-size: 18px;
+}
+.debit{
+    background: #ffadad;
+}
+.credit{
+    background: #caffbf;
+}
+
+.transaction-amount{
+    float: right;
+    padding: 5px;
+}
+
+.balance{
+    padding: 2%;
+    font-size: 25px;
+    position: sticky;
+    top: 0;
+}

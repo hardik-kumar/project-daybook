@@ -30,7 +30,7 @@ export class CommonService {
 
   
   convertAmount(amount: number, type: string) : number{
-    console.log("!!!type",type);
+    //console.log("!!!type",type);
     if( this.possibleIncomeTypes.indexOf(type.trim().toLowerCase()) > -1){       
         return amount > 0 ? amount : (-amount);
     }
@@ -50,15 +50,26 @@ export class CommonService {
          dmyMap[element.category.toString()].push(transactionObj[index])
       }
     })
-
-    console.log("!!! success",dmyMap);
+    //console.log("!!! success",dmyMap);
     let value : number[] = []; 
     for (let key in dmyMap) {
       let amount = dmyMap[key].map(value => value.amount).reduce((accumulator, currentValue) => accumulator + currentValue);
       value.push(amount);
     }
     let keys = Object.keys(dmyMap)
-
     return {labels: keys, values: value}
+  }
+  //: {accountName: string[], transactions: Transaction[]}
+  categorizeLendTransactions(transactions: Transaction[]): {[accountName:string]: Transaction[]}{
+    let dmyMap: {[accountName:string]: Transaction[]} = {};
+    transactions.forEach((element, index) => {
+      if(! (element.tags[0].toString() in dmyMap)){
+        dmyMap[element.tags[0].toString()] = [transactions[index]];
+      }
+      else{
+        dmyMap[element.tags[0].toString()].push(transactions[index]);
+      }
+    })
+    return dmyMap;
   }
 }

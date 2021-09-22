@@ -1,0 +1,44 @@
+<span><button type = "button" mat-raised-button color="primary" (click)="getPreviousAccount()">Get Previous Side account</button></span>
+<span><button type = "button" mat-raised-button color="primary" [disabled] = "disableSave" (click)="saveSideAccount()">Save Side account</button></span>
+
+<div class = "row account-container">
+
+    <div class = "col-4 account">
+      <mat-card>
+        <header>
+          <span>{{sideAccountDTO.accountName}}</span>
+          <div class = "balance" [ngClass]="previousBalance > 0 ? 'credit' : 'debit'">
+            <i class = "fas fa-cash-register" style="padding: 5px;"></i>
+              <span class = "transaction-desc">Previous Balance &nbsp;&nbsp;&nbsp;</span>
+              
+              <span class = "transaction-amount">{{previousBalance}}</span>
+          </div>
+          <!-- <mat-slide-toggle [checked]= "showChart" (change) = "showChart = !showChart">Show Pie Chart</mat-slide-toggle> -->
+          <!-- <span><button type = "button" mat-raised-button color="primary" (click)="openDialog()">Add</button></span>
+          <span style="font-size: 35px;"><i class="bi bi-file-earmark-arrow-up-fill" (click)="file.click()"></i><input type="file" style="display: none;" #file (change)="onFileChange($event)" multiple="false" /></span> -->
+        </header>
+      <div class = "containerBox">
+          <div *ngFor = "let tr of sideAccountDTO.transactions;let index = index" class = "transaction-row" [ngClass]="tr.amount > 0 ? 'credit' : 'debit'">
+            <!-- (mouseover)="rowIndex = index" (mouseleave)="rowIndex = -1"   -->
+            <div>
+                <i [ngClass] = "categoryIcons[tr.category]" style="padding: 5px;"></i>
+                  <span class = "transaction-desc">{{tr.desc}} &nbsp;&nbsp;&nbsp;</span> 
+                  <span class = "transaction-desc">{{tr.date | date }}</span>
+                  <!-- <span *ngIf="rowIndex == index" class = "actionIcon" style="cursor: pointer;">
+                    <i class="fas fa-edit" (click)="editDialog(tr)"></i>
+                    <i class="bi bi-trash-fill" (click)="deleteSingleTransaction(tr._id || '')"></i>
+                  </span> -->
+                  <span class = "transaction-amount">{{tr.amount}}</span>
+              </div>
+              
+          </div>
+          <div class = "balance" [ngClass]="finalBalance > 0 ? 'credit' : 'debit'">
+            <i class = "fas fa-cash-register" style="padding: 5px;"></i>
+              <span class = "transaction-desc">Final Balance &nbsp;&nbsp;&nbsp;</span>
+              
+              <span class = "transaction-amount">{{finalBalance}}</span>
+          </div>
+      </div>
+      </mat-card>
+  </div>  
+  </div>

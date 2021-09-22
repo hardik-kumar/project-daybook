@@ -1,2 +1,13 @@
-<app-account [accountId] = "1"></app-account>
-<app-account [accountId] = "2"></app-account>
+<div *ngFor = "let id of portfolio.accountId">
+<app-account [accountId] = "id" [month] = "portfolio.month" [year] = "portfolio.year" (lendTransactions) = "inLendTransactions($event)"></app-account>
+</div>
+
+
+<!-- <app-account [accountId] = "1" (lendTransactions) = "inLendTransactions($event)"></app-account>
+<app-account [accountId] = "2" (lendTransactions) = "inLendTransactions($event)"></app-account> -->
+
+<span><button type = "button" mat-raised-button color="primary" (click)="savePortfolio()">Save Portfolio</button></span>
+<!-- <span><button type = "button" mat-raised-button color="primary" (click)="deletePortfolio()">Delete Portfolio</button></span> -->
+<div *ngFor = "let sideAccount of sideAccountDTO">
+    <app-side-account [sideAccountDTO] = "sideAccount"></app-side-account>
+</div>

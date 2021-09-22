@@ -22,6 +22,7 @@ import { PieChartComponent } from './components/charts/pie-chart/pie-chart.compo
 import { MatIconModule } from '@angular/material/icon';
 import { PortfolioComponent } from './components/portfolio/portfolio.component';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { SideAccountComponent } from './components/side-account/side-account.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
     TransactionDialogComponent,
     DonutChartComponent,
     PieChartComponent,
-    PortfolioComponent
+    PortfolioComponent,
+    SideAccountComponent
   ],
   imports: [
     BrowserModule,
