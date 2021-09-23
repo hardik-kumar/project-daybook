@@ -50,6 +50,10 @@ export class TransactionService {
   allTransactionByDate(searchObj: {accountId: number, month: string, year: string}){
     return this.http.put<{message: string, allTransactions: Transaction[]}>('http://localhost:3000/api/transaction/allTransaction/'+searchObj.accountId,searchObj);
   }
+  //getBulkTransaction
+  getBulkTransactions(transactions: string[]){
+    return this.http.post<{message: string, allTransactions: Transaction[]}>('http://localhost:3000/api/transaction/getBulkTransaction',{transactions}).toPromise();
+  }
 
   deleteTransaction(id: string){
     //console.log("service deleted transaction id",id);
@@ -63,18 +67,22 @@ export class TransactionService {
   getPorfolio(month: number, year: number){
     return this.http.put<{message: string, portfolio: Portfolio[]}>('http://localhost:3000/api/portfolio/getPortfolio',{month: month,year:year});
   }
+  //getPortfolioById
+  getPorfolioById(id: string){
+    return this.http.get<{message: string, portfolio: Portfolio[]}>('http://localhost:3000/api/portfolio/getPortfolioById/'+id);
+  }
   addPortfolio(portfolioObj: Portfolio){
-    //console.log("saving portfolio ",portfolioObj);
+    console.log("saving portfolio ",portfolioObj);
     return this.http.post('http://localhost:3000/api/portfolio/addPortfolio',portfolioObj);
   }
 
   addSideAccount(sideAccountObj: SideAccount){
     //console.log("saving side acc",sideAccountObj);
-    return this.http.post('http://localhost:3000/api/sideAccount/addSideAccount',sideAccountObj)
+    return this.http.post<{message: string, id: string}>('http://localhost:3000/api/sideAccount/addSideAccount',sideAccountObj)
   }
 
   getSideAccount(id: string){
-    return this.http.get('http://localhost:3000/api/sideAccount/getSideAccount/'+id)
+    return this.http.get<{message: string, sideAccount: SideAccount[]}>('http://localhost:3000/api/sideAccount/getSideAccount/'+id)
   }
   getPreviousSideAccount(accountName: string, month: number, year: number){
     let obj = {

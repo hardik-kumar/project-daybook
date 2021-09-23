@@ -118,7 +118,27 @@ exports.updateTransaction = (request, response, next) =>{
         response.status(500).json({message:"Unable to connect to server, post not fetched"});
       })
       }
-
+  exports.getBulkTransaction = (request, response, next) => {
+    let transactions = request.body.transactions;
+    let obj = [];
+    transactions.forEach(element => {
+      obj.push(element);
+    });
+    console.log("OBJ",obj);
+    const query = Transaction.find({_id: {$in : obj}});
+    let allTransactions;
+    query.then(document =>{
+      allTransactions = document;
+      return;
+    }).then(() => {
+      response.status(200).json({
+        message: "Success!",
+        allTransactions: allTransactions
+      })
+    }).catch(error =>{
+      response.status(500).json({message:"Unable to connect to server, post not fetched"});
+    })
+  }
   exports.allTransactionByDate = (request, response, next) =>{
     // console.log("ACC ID",request.params.accountId);
     // console.log("monthyear",request.body.month,"  ",request.body.year);

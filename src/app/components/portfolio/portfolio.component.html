@@ -9,5 +9,5 @@
 <span><button type = "button" mat-raised-button color="primary" (click)="savePortfolio()">Save Portfolio</button></span>
 <!-- <span><button type = "button" mat-raised-button color="primary" (click)="deletePortfolio()">Delete Portfolio</button></span> -->
 <div *ngFor = "let sideAccount of sideAccountDTO">
-    <app-side-account [sideAccountDTO] = "sideAccount"></app-side-account>
+    <app-side-account [sideAccountDTO] = "sideAccount" (newSideAccountId) = "newSideAccountId($event)"></app-side-account>
 </div>

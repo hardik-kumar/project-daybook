@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { CommonService } from 'src/app/services/common.service';
 import { TransactionService } from 'src/app/transaction.service';
 import { SideAccountDTO, SideAccount } from 'src/assets/model/sideAccount';
@@ -11,6 +11,8 @@ import { SideAccountDTO, SideAccount } from 'src/assets/model/sideAccount';
 export class SideAccountComponent implements OnInit, OnChanges {
 
   @Input() sideAccountDTO: SideAccountDTO;
+  @Output() newSideAccountId = new EventEmitter<string>();
+
   categoryIcons : {[category: string]: string} = {}
   previousBalance: number = 0;
   finalBalance: number = 0;
@@ -20,11 +22,12 @@ export class SideAccountComponent implements OnInit, OnChanges {
   constructor(private _service : TransactionService, private commonService: CommonService) { }
   
   ngOnChanges(changes: SimpleChanges): void {
-    console.log("!! side acc created",this.sideAccountDTO._id);
+    // console.log("!! side acc created",this.sideAccountDTO._id);
+    // console.log("ID---",this.sideAccountDTO._id);
 
     //For existing side account
-    if(this.sideAccountDTO._id){
-
+    if(this.sideAccountDTO._id && this.sideAccountDTO._id != ''){
+      this.disableSave = true;
     }
     else {
       //For new side account
@@ -100,6 +103,9 @@ export class SideAccountComponent implements OnInit, OnChanges {
     }
     this._service.addSideAccount(obj).subscribe(response => {
       console.log("side account response ",response);
+      if(response && response.id){
+        this.newSideAccountId.emit(response.id);
+      }
       this.disableSave = true;
     })
   }

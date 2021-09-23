@@ -3,5 +3,5 @@ export interface Portfolio{
     month: number;
     year: number;
     accountId: number[];
-    lendAccounts : string[];
+    lendAccount : string[];
 }
