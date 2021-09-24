@@ -1,3 +1,27 @@
+<div class = "accountCategories" *ngIf = "accountCategories.length > 0">
+    <mat-label>Add Account</mat-label>
+    <mat-select (selectionChange)="addAccount($event.value)">
+        <mat-option *ngFor="let category of accountCategories"  [value]="category">
+          {{category.name}}
+        </mat-option>
+      </mat-select>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Month and Year</mat-label>
+        <input matInput  [matDatepicker]="dp" [formControl]="date">
+        <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+        <mat-datepicker #dp
+                        startView="multi-year"
+                        (yearSelected)="chosenYearHandler($event)"
+                        (monthSelected)="chosenMonthHandler($event, dp)"
+                        panelClass="example-month-picker">
+        </mat-datepicker>
+      </mat-form-field>
+</div>
+
+
+
+
 <div *ngFor = "let id of portfolio.accountId">
 <app-account [accountId] = "id" [month] = "portfolio.month" [year] = "portfolio.year" (lendTransactions) = "inLendTransactions($event)"></app-account>
 </div>

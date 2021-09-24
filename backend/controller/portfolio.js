@@ -45,7 +45,7 @@ exports.addPortfolio = (request, response, next) =>{
     let obj = new Portfolio({
     month: request.body.month,
     year: request.body.year,
-    accountId: request.body.accountIds,
+    accountId: request.body.accountId,
     lendAccount: request.body.lendAccount
     });
 

@@ -1,16 +1,82 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonService } from 'src/app/services/common.service';
 import { TransactionService } from 'src/app/transaction.service';
-import { Portfolio } from 'src/assets/model/portfolio';
+import { AccountCategories, Portfolio } from 'src/assets/model/portfolio';
 import { SideAccountDTO } from 'src/assets/model/sideAccount';
 import { Transaction } from 'src/assets/model/transaction';
+import {FormControl} from '@angular/forms';
+import {MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS} from '@angular/material-moment-adapter';
+import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
+import {MatDatepicker, MatDatepickerInputEvent} from '@angular/material/datepicker';
+
+// Depending on whether rollup is used, moment needs to be imported differently.
+// Since Moment.js doesn't have a default export, we normally need to import using the `* as`
+// syntax. However, rollup creates a synthetic default module and we thus need to import it using
+// the `default as` syntax.
+import * as _moment from 'moment';
+// tslint:disable-next-line:no-duplicate-imports
+import {default as _rollupMoment, Moment} from 'moment';
+
+const moment = _rollupMoment || _moment;
+
+// See the Moment.js docs for the meaning of these formats:
+// https://momentjs.com/docs/#/displaying/format/
+export const MY_FORMATS = {
+  parse: {
+    dateInput: 'MM/YYYY',
+  },
+  display: {
+    dateInput: 'MM/YYYY',
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
+
 
 @Component({
   selector: 'app-portfolio',
   templateUrl: './portfolio.component.html',
-  styleUrls: ['./portfolio.component.scss']
+  styleUrls: ['./portfolio.component.scss'],
+  providers: [
+    // `MomentDateAdapter` can be automatically provided by importing `MomentDateModule` in your
+    // application's root module. We provide it at the component level here, due to limitations of
+    // our example generation script.
+    {
+      provide: DateAdapter,
+      useClass: MomentDateAdapter,
+      deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS]
+    },
+
+    {provide: MAT_DATE_FORMATS, useValue: MY_FORMATS},
+  ]
 })
 export class PortfolioComponent implements OnInit {
+
+  date = new FormControl(moment());
+
+  chosenYearHandler(normalizedYear: Moment) {
+    const ctrlValue = this.date.value;
+    ctrlValue.year(normalizedYear.year());
+    this.date.setValue(ctrlValue);
+  }
+
+  chosenMonthHandler(normalizedMonth: Moment, datepicker: MatDatepicker<Moment>) {
+    const ctrlValue = this.date.value;
+    ctrlValue.month(normalizedMonth.month());
+    this.date.setValue(ctrlValue);
+    console.log(this.date.value.month());
+    
+    let newPortfolio : Portfolio = {
+      month: this.date.value.month() + 1,
+      year: 2021,
+      accountId: [],
+      lendAccount: []
+    };
+    this.portfolio = newPortfolio;
+    this.getPortfolio(this.portfolio.month,this.portfolio.year);
+    datepicker.close();
+  }
 
   constructor(private _service: TransactionService, private _commonService: CommonService) { }
   portfolio : Portfolio = {
@@ -21,11 +87,20 @@ export class PortfolioComponent implements OnInit {
   };
   lendTransactions : Transaction[] = [];
   sideAccountDTO: SideAccountDTO[] = [];
+  accountCategories: AccountCategories[] = [{id: 1, name: 'ICICI'},{id: 2, name: 'PNB'}]
+
+  addAccount(obj: AccountCategories){
+    let index = this.accountCategories.indexOf(obj);
+    console.log(index);
+    this.portfolio.accountId.push(this.accountCategories[index].id);
+    this.accountCategories.splice(index,1);
+    
+  }
 
   ngOnInit(): void {
     this.portfolio.month = (new Date().getMonth() + 1);
     this.portfolio.year = (new Date().getFullYear());
-    this.getPortfolio();
+    this.getPortfolio(this.portfolio.month, this.portfolio.year);
     
     // this.getPortfolioById('');
     //console.log("MONTH ",new Date().getMonth() + 1);
@@ -41,8 +116,8 @@ export class PortfolioComponent implements OnInit {
     // this.createSideAccounts(this.lendTransactions);
   }
 
-  getPortfolio(){
-    this._service.getPorfolio(this.portfolio.month,this.portfolio.year).subscribe(response =>{
+  getPortfolio(month: number, year: number){
+    this._service.getPorfolio(month,year).subscribe(response =>{
       console.log("!!! portfolio",response);
       //if we get portfolio
       if(response.portfolio.length > 0){
@@ -50,6 +125,15 @@ export class PortfolioComponent implements OnInit {
         console.log("!!!portfolio",this.portfolio);
         //Creating the side accounts from fetched portfolio
         this.getSideAccounts(this.portfolio.lendAccount);
+        //remove add account categories
+        
+        this.portfolio.accountId.forEach(id =>{
+          let index = this.accountCategories.findIndex(obj => obj.id == id);
+          if(index) {
+            console.log(this.accountCategories.splice(index,1));
+            
+          }
+        })
       }
 
     })

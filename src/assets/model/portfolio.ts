@@ -5,3 +5,8 @@ export interface Portfolio{
     accountId: number[];
     lendAccount : string[];
 }
+
+export interface AccountCategories{
+    id: number,
+    name: string;
+}
