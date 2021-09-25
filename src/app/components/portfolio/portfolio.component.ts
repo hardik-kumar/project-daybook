@@ -87,7 +87,8 @@ export class PortfolioComponent implements OnInit {
   };
   lendTransactions : Transaction[] = [];
   sideAccountDTO: SideAccountDTO[] = [];
-  accountCategories: AccountCategories[] = [{id: 1, name: 'ICICI'},{id: 2, name: 'PNB'}]
+  accountCategories: AccountCategories[] = []
+  accountCategoriesGlobal: AccountCategories[] = [{id: 1, name: 'ICICI'},{id: 2, name: 'PNB'}]
 
   addAccount(obj: AccountCategories){
     let index = this.accountCategories.indexOf(obj);
@@ -98,6 +99,7 @@ export class PortfolioComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.accountCategories = Object.assign([],this.accountCategoriesGlobal);
     this.portfolio.month = (new Date().getMonth() + 1);
     this.portfolio.year = (new Date().getFullYear());
     this.getPortfolio(this.portfolio.month, this.portfolio.year);
@@ -114,6 +116,12 @@ export class PortfolioComponent implements OnInit {
     //console.log("incoming lend transactions ",this.lendTransactions);
     // this.getPortfolio();
     // this.createSideAccounts(this.lendTransactions);
+    if(this.portfolio.lendAccount.length > 0){
+      
+    }
+    else{
+    this.createSideAccounts(this.lendTransactions);
+    }
   }
 
   getPortfolio(month: number, year: number){
@@ -134,6 +142,10 @@ export class PortfolioComponent implements OnInit {
             
           }
         })
+      }
+      else{
+        this.sideAccountDTO = [];    
+        this.accountCategories = Object.assign([],this.accountCategoriesGlobal);
       }
 
     })
@@ -180,12 +192,16 @@ export class PortfolioComponent implements OnInit {
     return obj;
   }
   getSideAccounts(sideAccountIds: string[]){
+    console.log("sA ids",sideAccountIds);
+    
     sideAccountIds.forEach((id,index) =>{
       this._service.getSideAccount(id).subscribe(async response =>{
         let sideAccount = response.sideAccount[0];
         // console.log("!! portfolio",sideAccount);
-        
-        let transaction: Transaction[] = await this.getBulkTransactions(sideAccount.transactions)
+
+        //checking if we get side account on service call
+        if(sideAccount){
+          let transaction: Transaction[] = await this.getBulkTransactions(sideAccount.transactions)
         
         let obj = {
           _id: sideAccount._id,
@@ -199,6 +215,7 @@ export class PortfolioComponent implements OnInit {
         // console.log("!! portfolio",obj);
         
         this.sideAccountDTO.push(obj);
+        }
       })
     })
   }
@@ -225,5 +242,24 @@ export class PortfolioComponent implements OnInit {
 
   newSideAccountId(id: string){
     this.portfolio.lendAccount.push(id);
+    console.log("!! p",this.portfolio);
+    
+    this.saveUpdatePortfolio(this.portfolio);
+  }
+
+  saveUpdatePortfolio(portfolio: Portfolio){
+    if(portfolio._id && portfolio._id != '' && portfolio._id != undefined){
+      //UPDATE PORTFOLIO
+      this._service.updatePortfolio(this.portfolio._id !, this.portfolio).subscribe(response =>{
+        console.log("update portfolio response",response);
+        
+      })
+
+    }
+    else{
+      //SAVE PORTFOLIO
+      this.savePortfolio();
+    }
+
   }
 }

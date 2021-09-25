@@ -60,6 +60,27 @@ exports.addPortfolio = (request, response, next) =>{
     });
   }
 
+exports.updatePortfolio = (request, response, next) => {
+  let obj = new Portfolio({
+    _id: request.params.id,
+    month: request.body.month,
+    year: request.body.year,
+    accountId: request.body.accountId,
+    lendAccount: request.body.lendAccount
+  })
+  console.log("OBJJJJ",obj);
+  Portfolio.updateOne({_id: request.params.id},obj).then(res =>{
+    if(res.n > 0) {
+      response.status(200).json({message: "success"})
+    }
+    else {
+      response.status(401).json({message: "unautherized"})
+    }
+  }).catch(error =>{
+    response.status(500).json({message:"Unable to connect to server, posts not found"});
+  })
+}
+
 exports.deletePortfolio = (request, response, next) =>{
     Portfolio.deleteOne({_id: request.params.id}).then(result =>{
         if(result.n > 0) {

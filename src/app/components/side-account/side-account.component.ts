@@ -28,6 +28,7 @@ export class SideAccountComponent implements OnInit, OnChanges {
     //For existing side account
     if(this.sideAccountDTO._id && this.sideAccountDTO._id != ''){
       this.disableSave = true;
+      this.calculateFinalBalance();
     }
     else {
       //For new side account
@@ -86,9 +87,9 @@ export class SideAccountComponent implements OnInit, OnChanges {
         }else{
           this.previousBalance = 0;
         }
-    //Once previous balance is updated then final balance will be calculated
-    this.calculateFinalBalance();
       }
+      //Once previous balance is updated then final balance will be calculated
+      this.calculateFinalBalance();
     })
   }
   saveSideAccount(){

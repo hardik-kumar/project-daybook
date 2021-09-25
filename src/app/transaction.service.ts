@@ -75,6 +75,11 @@ export class TransactionService {
     console.log("saving portfolio ",portfolioObj);
     return this.http.post('http://localhost:3000/api/portfolio/addPortfolio',portfolioObj);
   }
+  updatePortfolio(portfolioId: string,portfolioObj: Portfolio){
+    console.log("update portfolio",portfolioObj,"id: ",portfolioId);
+    return this.http.put<{message: string}>('http://localhost:3000/api/portfolio/updatePortfolio/'+portfolioId,portfolioObj)
+
+  }
 
   addSideAccount(sideAccountObj: SideAccount){
     //console.log("saving side acc",sideAccountObj);
