@@ -32,12 +32,12 @@ export class TransactionService {
       accountId: transactionObj.accountId
     }
     //console.log("OBJ to backend",obj);
-    
-    return this.http.post('http://localhost:3000/api/transaction/addTransaction',obj)
+    // return this.http.get<{message: string, id: string}>('assets/json/addTransaction.json')
+    return this.http.post<{message: string,id: string}>('http://localhost:3000/api/transaction/addTransaction',obj)
   }
 
   updateTransaction(transactionId: string,transactionObj: Transaction){
-    //console.log("update transaction",transactionObj,"id: ",transactionId);
+    console.log("update transaction",transactionObj,"id: ",transactionId);
     return this.http.put<{message: string}>('http://localhost:3000/api/transaction/updateTransaction/'+transactionId,transactionObj)
 
   }
@@ -98,5 +98,10 @@ export class TransactionService {
     console.log("DATE obj",obj);
     
     return this.http.put<{message: string, sideAccount: SideAccount[]}>('http://localhost:3000/api/sideAccount/getPreviousSideAccount',obj)
+  }
+
+  updateSideAccount(sideAccountId: string,sideAccountObj: SideAccount){
+    //console.log("update transaction",transactionObj,"id: ",transactionId);
+    return this.http.put<{message: string}>('http://localhost:3000/api/sideAccount/updateSideAccount/'+sideAccountId,sideAccountObj)
   }
 }

@@ -9,3 +9,9 @@ export interface Transaction{
       amountExclusion : boolean,
       accountId: number
 }
+
+export interface UpdateTransactionDTO{
+      accountName: string;
+      action: string;
+      transaction: Transaction;
+}

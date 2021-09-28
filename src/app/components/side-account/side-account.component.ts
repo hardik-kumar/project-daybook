@@ -22,8 +22,9 @@ export class SideAccountComponent implements OnInit, OnChanges {
   constructor(private _service : TransactionService, private commonService: CommonService) { }
   
   ngOnChanges(changes: SimpleChanges): void {
+    console.log("RUN NG ON CHANGES");
     // console.log("!! side acc created",this.sideAccountDTO._id);
-    // console.log("ID---",this.sideAccountDTO._id);
+    console.log("ID---",this.sideAccountDTO);
 
     //For existing side account
     if(this.sideAccountDTO._id && this.sideAccountDTO._id != ''){
@@ -39,10 +40,23 @@ export class SideAccountComponent implements OnInit, OnChanges {
       this.getTransactionIds();
       //console.log("!! DTO obj",this.sideAccountDTO);
     }
+
+    this.commonService.updateTransactionObj.subscribe(object =>{
+      console.log("LOGGING OBJECT",object );
+      console.log("LOGGING OBJECT1",this.sideAccountDTO);
+      console.log("LOGGING OBJECT2",object.accountName == this.sideAccountDTO.accountName);
+      
+      if(object.accountName == this.sideAccountDTO.accountName){
+        if(object.action == 'update') this.updateSideAccount();
+        if(object.action == 'save') this.saveSideAccount();
+      }
+    })
     
   }
   ngOnInit(): void {
     this.categoryIcons = this.commonService.categoryIcons;
+    console.log("ONINIT");
+    
 
   }
   getSideAccount(id: string){
@@ -53,6 +67,8 @@ export class SideAccountComponent implements OnInit, OnChanges {
   }
 
   calculateFinalBalance():number{
+    console.log("CALC",this.sideAccountDTO.transactions);
+    
     this.finalBalance = this.sideAccountDTO.transactions
     .map(value => value.amount)
     .reduce((accumulator, currentValue) => {return accumulator + currentValue},0) + this.previousBalance;
@@ -93,6 +109,8 @@ export class SideAccountComponent implements OnInit, OnChanges {
     })
   }
   saveSideAccount(){
+    console.log("saving side -a");
+    
     let obj: SideAccount = {
       accountName: this.sideAccountDTO.accountName,
     previousBalance: this.previousBalance,
@@ -103,12 +121,36 @@ export class SideAccountComponent implements OnInit, OnChanges {
     year: this.sideAccountDTO.year
     }
     this._service.addSideAccount(obj).subscribe(response => {
-      console.log("side account response ",response);
+      console.log("save side account response ",response);
       if(response && response.id){
         this.newSideAccountId.emit(response.id);
       }
       this.disableSave = true;
     })
+  }
+  updateSideAccount(){
+    console.log("updating side account");
+    if(this.sideAccountDTO._id && this.sideAccountDTO._id != ''){
+      this.getTransactionIds();
+      let obj: SideAccount = {
+        _id: this.sideAccountDTO._id,
+        accountName: this.sideAccountDTO.accountName,
+      previousBalance: this.previousBalance,
+      finalBalance: this.finalBalance,
+      transactions : this.transactionIds,
+      previousId: this.sideAccountDTO.previousId,
+      month: this.sideAccountDTO.month,
+      year: this.sideAccountDTO.year
+      }
+      this._service.updateSideAccount(this.sideAccountDTO._id,obj).subscribe(response =>{
+        console.log("UPDATE SIDE ACC", response);
+        
+      })
+    }
+    else {
+      console.log("SIDE ACCOUNT NOT PRESENT");
+      
+    }
   }
 
   saveDmySideAccount(){

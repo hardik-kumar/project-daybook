@@ -23,7 +23,11 @@
 
 
 <div *ngFor = "let id of portfolio.accountId">
-<app-account [accountId] = "id" [month] = "portfolio.month" [year] = "portfolio.year" (lendTransactions) = "inLendTransactions($event)"></app-account>
+<app-account [accountId] = "id" 
+             [month] = "portfolio.month" 
+             [year] = "portfolio.year" 
+             (lendTransactions) = "inLendTransactions($event)"
+             (updateSideAccountObj) = updateSideAccount($event)></app-account>
 </div>
 
 
@@ -32,6 +36,6 @@
 
 <span><button type = "button" mat-raised-button color="primary" (click)="savePortfolio()">Save Portfolio</button></span>
 <!-- <span><button type = "button" mat-raised-button color="primary" (click)="deletePortfolio()">Delete Portfolio</button></span> -->
-<div *ngFor = "let sideAccount of sideAccountDTO">
-    <app-side-account [sideAccountDTO] = "sideAccount" (newSideAccountId) = "newSideAccountId($event)"></app-side-account>
+<div *ngFor = "let sideAccount of sideAccountDTO; let i = index">
+    <app-side-account [sideAccountDTO] = "sideAccount" id = "child" (newSideAccountId) = "newSideAccountId($event)"></app-side-account>
 </div>

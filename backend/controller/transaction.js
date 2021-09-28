@@ -34,23 +34,19 @@ exports.addTransaction = (request, response, next) =>{
   }
 
 exports.updateTransaction = (request, response, next) =>{
-  // let imagePath = request.body.imagePath;
-  // if(request.file){
-  //   const url = request.protocol + "://" + request.get("host");
-  //   imagePath = url + "/images/" + request.file.filename;
-  // }
-  console.log("HERE !!!");
+ 
   let obj = new Transaction({
     _id: request.params.id,
     type: request.body.type.value,
- desc: request.body.desc,
- amount: request.body.amount,
- date: request.body.date,
- category: request.body.category,
- tags: request.body.tags,
- amountExclusion: request.body.amountExclusion,
- accountId: request.body.accountId
- });
+    desc: request.body.desc,
+    amount: request.body.amount,
+    date: new Date((request.body.date).split("-").reverse().join("-")),
+    category: request.body.category,
+    tags: request.body.tags,
+    amountExclusion: request.body.amountExclusion,
+    accountId: request.body.accountId
+  });
+  console.log("HERE !!!",obj);
   Transaction.updateOne({_id: request.params.id},obj).then(res =>{
     if(res.n > 0) {
       response.status(200).json({message: "success"})

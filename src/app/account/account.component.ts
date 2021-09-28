@@ -42,6 +42,7 @@ export class AccountComponent implements OnInit, OnChanges {
   @Input() month: number;
   @Input() year: number;
   @Output() lendTransactions = new EventEmitter<Transaction[]>();
+  @Output() updateSideAccountObj = new EventEmitter<{action: string, transaction: Transaction}>();
 
   categoryIcons : {[category: string]: string} = {}
     
@@ -125,19 +126,47 @@ export class AccountComponent implements OnInit, OnChanges {
     let lendTransactions = this.transactions.filter(transaction => transaction.category == 'Lend')
     this.lendTransactions.emit(lendTransactions);
   }
+  updateSideAccount(action: string, transaction: Transaction){
+    let obj = {
+      action: action,
+      transaction: transaction
+    }
+
+    this.updateSideAccountObj.emit(obj);
+
+  }
   openDialog(): void {
     const dialogRef = this.dialog.open(TransactionDialogComponent, {
       width: '550px',
       data: {accountId: this.accountId}
     });
 
+
     dialogRef.afterClosed().subscribe(result => {
       //console.log('The dialog was closed', result);
       if(result){
         //console.log("save object->",result);
         this.service.addTransaction(result.data).subscribe(response => {
-          //console.log("RESPONSE",response);
+          console.log("RESPONSE",response);
           
+          //Update transaction in side account if type: lend
+          console.log("result",result.data);
+          
+          if(result.data.category == 'Lend'){
+            let addTransactionToSideAccount : Transaction = {
+              _id: response.id,
+              type: result.data.type,
+              desc: result.data.desc,
+              amount: result.data.amount,
+              date: result.data.date,
+              category: result.data.category,
+              tags: result.data.tags,
+              amountExclusion : result.data.amountExclusion,
+              accountId: result.data.accountId
+
+            }
+            this.updateSideAccount('add',addTransactionToSideAccount);
+          }
         })        
         //console.log(this.transactions);
         this.getTransactions();
@@ -157,7 +186,26 @@ export class AccountComponent implements OnInit, OnChanges {
       if(result){
         //console.log("edit object->",result);
         this.service.updateTransaction(String(transaction._id),result.data).subscribe(response => {
-          //console.log("RESPONSE",response);
+          console.log("RESPONSE",response);
+          
+          //Update transaction in side account if type: lend
+          console.log("result",result.data);
+          
+          if(result.data.category == 'Lend'){
+            let addTransactionToSideAccount : Transaction = {
+              _id: String(transaction._id),
+              type: result.data.type,
+              desc: result.data.desc,
+              amount: result.data.amount,
+              date: result.data.date,
+              category: result.data.category,
+              tags: result.data.tags,
+              amountExclusion : result.data.amountExclusion,
+              accountId: result.data.accountId
+
+            }
+            this.updateSideAccount('update',addTransactionToSideAccount);
+          }
         })
         //console.log(this.transactions);
         this.getTransactions();

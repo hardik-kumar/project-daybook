@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Transaction } from 'src/assets/model/transaction';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { Transaction, UpdateTransactionDTO } from 'src/assets/model/transaction';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,8 @@ export class CommonService {
 
   possibleIncomeTypes : string[] = ["income"]
   possibleExpenseType : string[] = ["spend"]
-  
+  private updateTransactionSub = new Subject<UpdateTransactionDTO>();
+  updateTransactionObj = this.updateTransactionSub.asObservable();
   categoryIcons : {[category: string]: string} = {'Bills' :'bi bi-receipt',
   'EMI' :'bi bi-caret-right-fill',
   'Entertainment' :'bi bi-film',
@@ -28,7 +30,10 @@ export class CommonService {
   'Reward': 'fas fa-award',
    'Last Balance': 'fas fa-cash-register'}
 
-  
+  updateTransaction(obj: UpdateTransactionDTO){
+    console.log("RUNNING updateTransaction");
+    this.updateTransactionSub.next(obj);
+  }
   convertAmount(amount: number, type: string) : number{
     //console.log("!!!type",type);
     if( this.possibleIncomeTypes.indexOf(type.trim().toLowerCase()) > -1){       

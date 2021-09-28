@@ -108,7 +108,7 @@ export class TransactionDialogComponent implements OnInit {
     this.transactionForm.controls['tags'].setValue(this.tags);
     if(this.transactionForm.valid){
       obj = {
-        id: 4,
+        // id: 4,
         type: this.transactionForm.controls['type'].value,
         desc: this.transactionForm.controls['description'].value,
         amount: this.commonService.convertAmount(this.transactionForm.controls['amount'].value, this.transactionForm.controls['type'].value),

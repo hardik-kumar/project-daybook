@@ -1,4 +1,4 @@
-const { request } = require('express')
+const { request, response } = require('express')
 const SideAccount = require('../models/sideAccount')
 
 exports.getSideAccount = (request, response, next) =>{
@@ -58,4 +58,27 @@ exports.addSideAccount = (request, response, next) =>{
     }).catch(error =>{
         response.status(500).json({message:error});
       });
+}
+
+exports.updateSideAccount = (request, response, next) =>{
+    let obj = new SideAccount({
+        _id: request.params.id,
+        accountName: request.body.accountName,
+    previousBalance: request.body.previousBalance,
+    finalBalance: request.body.finalBalance,
+    transactions:request.body.transactions,
+    previousId: request.body.previousId,
+    month: request.body.month,
+    year: request.body.year
+     });
+     SideAccount.updateOne({_id: request.params.id},obj).then(res =>{
+        if(res.n > 0) {
+          response.status(200).json({message: "success"})
+        }
+        else {
+          response.status(401).json({message: "unautherized"})
+        }
+      }).catch(error =>{
+        response.status(500).json({message:"Unable to connect to server, posts not found"});
+      })
 }

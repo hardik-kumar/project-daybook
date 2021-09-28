@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonService } from 'src/app/services/common.service';
 import { TransactionService } from 'src/app/transaction.service';
 import { AccountCategories, Portfolio } from 'src/assets/model/portfolio';
 import { SideAccountDTO } from 'src/assets/model/sideAccount';
-import { Transaction } from 'src/assets/model/transaction';
+import { Transaction, UpdateTransactionDTO } from 'src/assets/model/transaction';
 import {FormControl} from '@angular/forms';
 import {MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS} from '@angular/material-moment-adapter';
 import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
@@ -16,6 +16,7 @@ import {MatDatepicker, MatDatepickerInputEvent} from '@angular/material/datepick
 import * as _moment from 'moment';
 // tslint:disable-next-line:no-duplicate-imports
 import {default as _rollupMoment, Moment} from 'moment';
+import { SideAccountComponent } from '../side-account/side-account.component';
 
 const moment = _rollupMoment || _moment;
 
@@ -51,8 +52,12 @@ export const MY_FORMATS = {
     {provide: MAT_DATE_FORMATS, useValue: MY_FORMATS},
   ]
 })
-export class PortfolioComponent implements OnInit {
-
+export class PortfolioComponent implements OnInit{
+  // @ViewChild('child') child: ChildComponent;
+  // @ViewChild('sideComponent2') sideComponent: SideAccountComponent
+  // @ViewChild("sideComponent2", { read: ViewContainerRef })
+  // container: ViewContainerRef;
+  @ViewChild('child', {static: false }) child: ElementRef ;
   date = new FormControl(moment());
 
   chosenYearHandler(normalizedYear: Moment) {
@@ -79,6 +84,7 @@ export class PortfolioComponent implements OnInit {
   }
 
   constructor(private _service: TransactionService, private _commonService: CommonService) { }
+
   portfolio : Portfolio = {
     month: 9,
     year: 2021,
@@ -231,7 +237,7 @@ export class PortfolioComponent implements OnInit {
         previousId: '',
         month: this.portfolio.month,
         year: this.portfolio.year,
-        previousBalance: 100
+        // previousBalance: 100
       }
       sideAccountDmyDTO.push(obj);
     }
@@ -245,6 +251,134 @@ export class PortfolioComponent implements OnInit {
     console.log("!! p",this.portfolio);
     
     this.saveUpdatePortfolio(this.portfolio);
+  }
+
+  updateSideAccount(updatedTransation: {action: string, transaction: Transaction}){
+    console.log("update id in portfolio",updatedTransation);
+
+    //If we get proper response and action
+    if(updatedTransation && updatedTransation.action){
+      
+      //Condtions for differnet actions
+      if(updatedTransation.action == 'add'){
+        console.log("Updating transaction",updatedTransation.transaction);
+        let toBeUpdateSideAccount = this.sideAccountDTO.find(element => element.accountName == updatedTransation.transaction.tags[0]);
+
+        //IF side account present
+        if(toBeUpdateSideAccount){
+          //Finding index of side account to update
+          let index = this.sideAccountDTO.indexOf(toBeUpdateSideAccount);
+          //Creating new sideaccount object
+          //Pushing transaction into new side account object
+          //Replacing the object using splice
+          let sideAccountDTOObj : SideAccountDTO = {
+            _id: toBeUpdateSideAccount._id,
+            accountName: toBeUpdateSideAccount.accountName,
+            previousId: toBeUpdateSideAccount.previousId,
+            finalBalance: toBeUpdateSideAccount.finalBalance,
+            month: toBeUpdateSideAccount.month,
+            year: toBeUpdateSideAccount.year,
+            transactions : toBeUpdateSideAccount.transactions
+          }
+          sideAccountDTOObj.transactions.push(updatedTransation.transaction);
+          // this.sideAccountDTO.push(sideAccountDTOObj);
+          this.sideAccountDTO.splice(index,1,sideAccountDTOObj);
+          // document.getElementById('sideComponent2')!.runSaveSideAccount();
+          let obj : UpdateTransactionDTO = {
+            accountName: toBeUpdateSideAccount.accountName,
+            action: 'update',
+            transaction: updatedTransation.transaction
+          }
+          this._commonService.updateTransaction(obj);
+
+        }
+        //Adding transaction when side account is not present
+        else{
+          let sideAccountDTOObj : SideAccountDTO = {
+            accountName: updatedTransation.transaction.tags[0],
+            month: this.portfolio.month,
+            year: this.portfolio.year,
+            transactions : [updatedTransation.transaction]
+          }
+          this.sideAccountDTO.push(sideAccountDTOObj);
+          let obj : UpdateTransactionDTO = {
+            accountName: sideAccountDTOObj.accountName,
+            action: 'save',
+            transaction: updatedTransation.transaction
+          }
+          setTimeout(()=>{
+            this._commonService.updateTransaction(obj);
+          },3000)
+        }
+        console.log("UPDATE SIDE ACCOUNT",toBeUpdateSideAccount);
+        console.log("SIDE ACCOUNT",this.sideAccountDTO);
+        
+      }
+      //Save side account after transaction addition
+
+      if(updatedTransation.action == 'update'){
+        console.log("Updating transaction",updatedTransation.transaction);
+        let toBeUpdateSideAccount = this.sideAccountDTO.find(element => element.accountName == updatedTransation.transaction.tags[0]);
+
+        //IF side account present
+        if(toBeUpdateSideAccount){
+          //Finding index of side account to update
+          let index = this.sideAccountDTO.indexOf(toBeUpdateSideAccount);
+          //Creating new sideaccount object
+          //Pushing transaction into new side account object
+          //Replacing the object using splice
+          let sideAccountDTOObj : SideAccountDTO = {
+            _id: toBeUpdateSideAccount._id,
+            accountName: toBeUpdateSideAccount.accountName,
+            previousId: toBeUpdateSideAccount.previousId,
+            finalBalance: toBeUpdateSideAccount.finalBalance,
+            month: toBeUpdateSideAccount.month,
+            year: toBeUpdateSideAccount.year,
+            transactions : toBeUpdateSideAccount.transactions
+          }
+          let transactionIdex = sideAccountDTOObj.transactions.findIndex(element => element._id == updatedTransation.transaction._id)
+          if(transactionIdex >= 0){
+            sideAccountDTOObj.transactions.splice(transactionIdex,1, updatedTransation.transaction)
+          }
+          // sideAccountDTOObj.transactions.push(updatedTransation.transaction);
+          // this.sideAccountDTO.push(sideAccountDTOObj);
+          this.sideAccountDTO.splice(index,1,sideAccountDTOObj);
+          let obj : UpdateTransactionDTO = {
+            accountName: sideAccountDTOObj.accountName,
+            action: 'update',
+            transaction: updatedTransation.transaction
+          }
+          setTimeout(()=>{
+            this._commonService.updateTransaction(obj);
+          },3000)
+        }
+        //Adding transaction when side account is not present
+        //this scenario might occur when editing transaction category is changed to 'Lend' 
+        else{
+          let sideAccountDTOObj : SideAccountDTO = {
+            accountName: updatedTransation.transaction.tags[0],
+            month: this.portfolio.month,
+            year: this.portfolio.year,
+            transactions : [updatedTransation.transaction]
+          }
+          this.sideAccountDTO.push(sideAccountDTOObj);
+
+          let obj : UpdateTransactionDTO = {
+            accountName: sideAccountDTOObj.accountName,
+            action: 'save',
+            transaction: updatedTransation.transaction
+          }
+          setTimeout(()=>{
+            this._commonService.updateTransaction(obj);
+          },3000)
+        }
+        console.log("UPDATE SIDE ACCOUNT",toBeUpdateSideAccount);
+        console.log("SIDE ACCOUNT",this.sideAccountDTO);
+        
+        
+      }
+
+    }
   }
 
   saveUpdatePortfolio(portfolio: Portfolio){
